@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2010, Sebastian Sdorra
  * All rights reserved.
  *
@@ -29,39 +29,33 @@
  *
  */
 
-function sayHello(){
-  Ext.Ajax.request({
-    url: restUrl + 'hello',
-    method: 'GET',
-    disableCaching: true,
-    success: function(response){
-      var msg = response.responseText;
-      Ext.MessageBox.show({
-        title: 'Hello Message',
-        msg: msg,
-        buttons: Ext.MessageBox.OK,
-        icon: Ext.MessageBox.INFO
-      });
-    },
-    failure: function(){
-      Ext.MessageBox.show({
-        title: 'Error',
-        msg: 'Could not display the hello message',
-        buttons: Ext.MessageBox.OK,
-        icon: Ext.MessageBox.ERROR
-      });
-    }
-  });
-}
+package sonia.scm.plugins.messageregex;
 
-loginCallbacks.push(function(){
-  var navPanel = Ext.getCmp('navigationPanel');
-  var count = navPanel.count() - 1;
-  navPanel.insertSection(count, {
-    title: 'Hello World',
-    items: [{
-      label: 'Say Hello',
-      fn: sayHello
-    }]
-  });
-});
+import sonia.scm.Validateable;
+import sonia.scm.repository.Repository;
+import sonia.scm.util.Util;
+
+/**
+ * 
+ * @author Marvin Froeder marvin_at_marvinformatics_dot_com
+ */
+public class MessageValidationConfiguration implements Validateable {
+
+	public static final String PROPERTY_REGEX = "message.regex";
+
+	private String regex;
+
+	public MessageValidationConfiguration(Repository repository) {
+		regex = repository.getProperty(PROPERTY_REGEX);
+	}
+
+	public String getRegex() {
+		return regex;
+	}
+
+	@Override
+	public boolean isValid() {
+		return Util.isNotEmpty(regex);
+	}
+
+}

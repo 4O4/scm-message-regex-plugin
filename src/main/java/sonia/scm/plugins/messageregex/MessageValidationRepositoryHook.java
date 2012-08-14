@@ -33,51 +33,66 @@ package sonia.scm.plugins.messageregex;
 
 //~--- non-JDK imports --------------------------------------------------------
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.regex.Pattern;
 
-import sonia.scm.security.SecurityContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//~--- JDK imports ------------------------------------------------------------
+import sonia.scm.plugin.ext.Extension;
+import sonia.scm.repository.Changeset;
+import sonia.scm.repository.RepositoryHook;
+import sonia.scm.repository.RepositoryHookEvent;
+import sonia.scm.repository.RepositoryHookType;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+/**
+ * @author Marvin Froeder marvin_at_marvinformatics_dot_com
+ */
+@Extension
+public class MessageValidationRepositoryHook implements RepositoryHook {
 
-@Path("hello")
-public class HelloResource {
+	public static final Collection<RepositoryHookType> TYPES = Arrays
+			.asList(RepositoryHookType.PRE_RECEIVE);
 
-  /**
-   * Constructs ...
-   *
-   *
-   * @param securityContextProvider
-   */
-  @Inject
-  public HelloResource(Provider<SecurityContext> securityContextProvider)
-  {
-    message = "Hello "
-              + securityContextProvider.get().getUser().getDisplayName();
-  }
+	/** the logger for RedmineIssuePostReceiveHook */
+	private static final Logger logger = LoggerFactory
+			.getLogger(MessageValidationRepositoryHook.class);
 
-  //~--- get methods ----------------------------------------------------------
+	@Override
+	public Collection<RepositoryHookType> getTypes() {
+		return TYPES;
+	}
 
-  /**
-   * Method description
-   *
-   *
-   * @return
-   */
-  @GET
-  @Produces(MediaType.TEXT_PLAIN)
-  public String getHelloMessage()
-  {
-    return message;
-  }
+	@Override
+	public boolean isAsync() {
+		return false;
+	}
 
-  //~--- fields ---------------------------------------------------------------
+	@Override
+	public void onEvent(RepositoryHookEvent evt) {
+		MessageValidationConfiguration cfg = new MessageValidationConfiguration(
+				evt.getRepository());
 
-  /** Field description */
-  private String message;
+		if (!cfg.isValid()) {
+			logger.debug("No regex for " + evt.getRepository().getName());
+			return;
+		}
+
+		Pattern pattern = Pattern.compile(cfg.getRegex());
+		Collection<Changeset> changes = evt.getChangesets();
+		for (Changeset changeset : changes) {
+			String msg = changeset.getDescription();
+			if (pattern.matcher(msg).matches()) {
+				continue;
+			} else {
+				String error = String.format(
+						"Invalid message, %s does not match regex %s", msg,
+						cfg.getRegex());
+				logger.error(error);
+				throw new IllegalStateException(error);
+			}
+		}
+	}
+
 }
