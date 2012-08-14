@@ -43,6 +43,9 @@
     <author></author>
     <url>${project.url}</url>
     -->
+    <author>Marvin Froeder</author>
+    <category>Miscellaneous</category>
+    <wiki>https://bitbucket.org/velo/scm-message-regex-plugin</wiki>
   </information>
 
   <packages>
@@ -50,7 +53,7 @@
   </packages>
 
   <resources>
-    <script>/scm/sample.hello.js</script>
+    <script>/scm/sonia.message.js</script>
   </resources>
 
 </plugin>
