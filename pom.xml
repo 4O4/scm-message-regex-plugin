@@ -10,6 +10,8 @@
 
   <artifactId>scm-message-regex-plugin</artifactId>
   <version>1.0-SNAPSHOT</version>
+  
+  <description>This plugin allows to validate each commit message using a regular expression.</description>
 
   <dependencies>
     <dependency>
