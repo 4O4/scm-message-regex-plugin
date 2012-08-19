@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>scm-message-regex-plugin</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   
   <description>This plugin allows to validate each commit message using a regular expression.</description>
 
@@ -59,7 +59,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
