@@ -1,5 +1,8 @@
 scm-message-regex-plugin
 ==============================
+
+Forked from https://bitbucket.org/velo/scm-message-regex-plugin
+
 This plugin is part of the scm-manager (http://www.scm-manager.org) project.
 
 Issue tracker: https://bitbucket.org/velo/scm-message-regex-plugin/issues
