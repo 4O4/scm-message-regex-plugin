@@ -29,9 +29,10 @@
  *
  */
 
-package sonia.scm.plugins.messageregex;
+package sonia.scm.plugins.messagepolicy;
 
 import sonia.scm.Validateable;
+import sonia.scm.PropertiesAware;
 import sonia.scm.repository.Repository;
 import sonia.scm.util.Util;
 
@@ -39,23 +40,49 @@ import sonia.scm.util.Util;
  * 
  * @author Marvin Froeder marvin_at_marvinformatics_dot_com
  */
-public class MessageValidationConfiguration implements Validateable {
+public class MessagePolicyConfiguration implements Validateable {
 
-	public static final String PROPERTY_REGEX = "message.regex";
+	public static final String PROPERTY_PATTERN_TEXT = "messagePolicy.pattern.text";
+	public static final String PROPERTY_PATTERN_DOTALL = "messagePolicy.pattern.dotall";
+	public static final String PROPERTY_PATTERN_MULTILINE = "messagePolicy.pattern.multiline";
 
-	private String regex;
+	private String patternText;
+	private boolean patternDotall;
+	private boolean patternMultiline;
 
-	public MessageValidationConfiguration(Repository repository) {
-		regex = repository.getProperty(PROPERTY_REGEX);
+	public MessagePolicyConfiguration(Repository repository) {
+		patternText = repository.getProperty(PROPERTY_PATTERN_TEXT);
+		patternDotall = getBooleanProperty(repository, PROPERTY_PATTERN_DOTALL);
+		patternMultiline = getBooleanProperty(repository, PROPERTY_PATTERN_MULTILINE);
 	}
 
-	public String getRegex() {
-		return regex;
+	private boolean getBooleanProperty(PropertiesAware repository, String key)
+	{
+		boolean result = false;
+		String value = repository.getProperty(key);
+
+		if (Util.isNotEmpty(value))
+		{
+			result = Boolean.parseBoolean(value);
+		}
+
+		return result;
+	}
+	public String getPatternText() {
+		return patternText;
+	}
+
+	public boolean getPatternDotall() {
+		return patternDotall;
+	}
+
+	public boolean getPatternMultiline() {
+		return patternMultiline;
 	}
 
 	@Override
 	public boolean isValid() {
-		return Util.isNotEmpty(regex);
+		return Util.isNotEmpty(patternText);
 	}
 
 }
