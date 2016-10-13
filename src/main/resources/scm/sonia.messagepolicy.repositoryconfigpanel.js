@@ -29,39 +29,51 @@
  * 
  */
 
-Ext.ns('Sonia.message');
+Ext.ns('Sonia.messagePolicy');
 
-Sonia.message.ConfigPanel = Ext.extend(Sonia.repository.PropertiesFormPanel, {
-  
-  formTitleText: 'message',
-  regexText: 'Regex',
-  regexHelpText: 'Regular expression to validate commit messages.',
-  
+Sonia.messagePolicy.ConfigPanel = Ext.extend(Sonia.repository.PropertiesFormPanel, {
   initComponent: function(){
-    
+    var messagePatternInput = {
+      name: 'messagePattern',
+      fieldLabel: 'Message pattern',
+      property: 'messagePolicy.pattern.text',
+      helpText: 'Regular expression to validate commit messages.'
+    };
+    var dotallCheckbox = {
+      name: 'patternDotall',
+      fieldLabel: 'DOTALL mode',
+      property: 'messagePolicy.pattern.dotall',
+      xtype: 'checkbox'
+    };
+    var multilineCheckbox = {
+      name: 'patternMultiline',
+      fieldLabel: 'MULTILINE mode',
+      property: 'messagePolicy.pattern.multiline',
+      xtype: 'checkbox'
+    };
+
     var config = {
-      title: this.formTitleText,
-      items: [{
-        name: 'messageRegex',
-        fieldLabel: this.regexText,
-        property: 'message.regex',
-        helpText: this.regexHelpText
-      }]
+      title: 'Commit message policy',
+      items: [
+        messagePatternInput,
+        dotallCheckbox,
+        multilineCheckbox
+       ]
     }
-    
+
     Ext.apply(this, Ext.apply(this.initialConfig, config));
-    Sonia.message.ConfigPanel.superclass.initComponent.apply(this, arguments);
+    Sonia.messagePolicy.ConfigPanel.superclass.initComponent.apply(this, arguments);
   }
 });
 
 // register xtype
-Ext.reg("messageConfigPanel", Sonia.message.ConfigPanel);
+Ext.reg("messagePolicyConfigPanel", Sonia.messagePolicy.ConfigPanel);
 
 // register panel
 Sonia.repository.openListeners.push(function(repository, panels){
   if (Sonia.repository.isOwner(repository)){
     panels.push({
-      xtype: 'messageConfigPanel',
+      xtype: 'messagePolicyConfigPanel',
       item: repository
     });
   }
